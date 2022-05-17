@@ -1,1 +1,158 @@
+server:
+  # 可以修改本服務使用的端口,默認8080, 如果本機需要啟動多個項目應該避免端口衝突
+  port: 8080
 
+# 開啟knife4j增強
+knife4j:
+  basePackage: com.qooapp
+  enable: true
+
+spring:
+  shardingsphere:
+    # 禁用 shardingJDBC,這是用於分庫分表的高級連接池
+    enabled: false
+  profiles:
+    #local devel beta test production
+    active: local
+  application:
+    name: Demo
+  mvc:
+    throw-exception-if-no-handler-found: true
+    static-path-pattern:
+      - /statics/**
+      - /webjars/**
+      - /public/**
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      mysql:
+        usePingMethod: false
+      filters: stat,slf4j
+      max-active: 100
+      initial-size: 1
+      max-wait: 60000
+      min-idle: 10
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: select 1
+      test-while-idle: true
+      test-on-borrow: true
+      test-on-return: true
+      pool-prepared-statements: true
+      max-open-prepared-statements: 200
+      filter:
+        slf4j:
+          enabled: true
+          statement-prepare-after-log-enabled: false
+          statement-close-after-log-enabled: false
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.1.250:3306/fly?characterEncoding=utf8&serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+  quartz:
+    schedulerName: quartz_${spring.application.name}
+    job-store-type: "jdbc"
+    autoStartup: true
+    waitForJobsToCompleteOnShutdown: false
+    properties:
+      org:
+        quartz:
+          scheduler:
+            instanceName: clusteredScheduler
+            instanceId: AUTO
+          jobStore:
+            class: org.quartz.impl.jdbcjobstore.JobStoreTX
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.StdJDBCDelegate
+            tablePrefix: QRTZ_
+            isClustered: true
+            clusterCheckinInterval: 10000
+            useProperties: false
+          threadPool:
+            class: org.quartz.simpl.SimpleThreadPool
+            threadCount: 8
+            threadPriority: 5
+            threadsInheritContextClassLoaderOfInitializingThread: true
+  # redis 配置
+  redis:
+    database: 0
+    host: 192.168.11.250
+    port: 6379
+    password:
+    timeout: 3000
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: -1
+        min-idle: 1
+  # 數據庫遷移腳本配置
+  flyway:
+    enabled: true
+    checkLocation: false
+    validateOnMigrate: true
+    outOfOrder: false
+    baselineOnMigrate: true
+    table: demo_flyway_schema_history
+
+config:
+  app:
+    sign:
+      enable: true
+      urls:
+        - /sign-test/*
+      exclude:
+        - /sign-test/a/test-un-sign
+  thread-pool:
+    enable: true
+  redisson:
+    enable: true
+  aws:
+    enable: true
+    accessKey: ...
+    secretAccessKey: ...
+    bucket: ...
+    pieceExpire: 86400000
+  i18ns:
+    default-locale: en
+  auth:
+    enable: true
+    csrf: false
+    sso:
+      host: https://sso.demo.com
+    ignore:
+      - "/login"
+      - "/notfound"
+      - "/error"
+    role-config:
+      - roles:
+          - ADMIN
+        matchers :
+          - "/adm_/**"
+      - roles:
+          - USER
+        matchers:
+          - "/**"
+  cors:
+    # 是否启用跨域 true / false
+    enable: true
+    # 允许的跨域网站, 集合 , 支持*号匹配所有
+    # 例如:"https://*.domain1.com","https://*.domain1.com:[*]","https://*.domain1.com:[8080,8081]"
+    allowed-origin: ["*","https://*.domain1.com"]
+
+  # GeoIP
+  geoip:
+    db:
+      #city: "/GeoIP/GeoLite2-City.mmdb"
+      country: "/GeoIP/GeoLite2-Country.mmdb"
+
+# Logger Config
+logging:
+  level:
+    root: INFO
+    com:
+      qooapp: INFO
+    org:
+      apache:
+        coyote:
+          http11:
+            # 用于显示详细的请求日志
+            Http11InputBuffer: DEBUG
