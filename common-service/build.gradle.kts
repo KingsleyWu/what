@@ -36,7 +36,9 @@ dependencies {
 	compileOnly("org.springframework.amqp:spring-amqp:2.4.4")
 
 	implementation("com.alibaba:druid:1.2.9")
+	@Suppress("VulnerableLibrariesLocal")
 	implementation("org.apache.shardingsphere:shardingsphere-jdbc-core-spring-boot-starter:5.1.1")
+	implementation("com.google.protobuf:protobuf-java:3.20.1")
 
 	implementation("io.swagger:swagger-annotations:1.6.6")
 	implementation("io.swagger:swagger-models:1.6.6")
