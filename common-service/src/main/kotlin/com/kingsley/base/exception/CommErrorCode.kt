@@ -8,7 +8,7 @@ import io.swagger.annotations.ApiOperation
 @ApiOperation("通用錯誤碼")
 enum class CommErrorCode(
     override val message: String?,
-    override val enMessage: String? = null
+    override val enMessage: String = ""
 ) : ErrorCode {
     E0000000400("錯誤的請求", "Bad Request"),
     E0000000401("未授權,請先登錄", "Unauthorized, Please log in"),
@@ -33,7 +33,7 @@ enum class CommErrorCode(
 
     E0000000503("发送通知消息失败", "Failed to send notification message"),
     E0000000600("超出最大上傳大小,最大:{}", "Maximum upload size exceeded,Max = {}"),
-    E0000008000("当前 QooApp 需更新", "QooApp need update"),
+    E0000008000("当前 App 需更新", "App need update"),
     E0000008001("Access Token 失效", "Access Token Ineffective"),
     E0000008002("特殊:全局通知,message應指定為通知页面", ""),
     E0000008003("用户名字违规", "User name violation"),

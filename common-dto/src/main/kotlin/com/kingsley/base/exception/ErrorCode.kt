@@ -31,7 +31,7 @@ interface ErrorCode {
     val enMessage: String
         get() = message ?: ""
 
-    fun exception(): BusinessException? {
+    fun exception(): BusinessException {
         return BusinessException(enMessage, this.code)
     }
 
@@ -40,11 +40,11 @@ interface ErrorCode {
      * @param customerMsg 自定义的错误消息
      * @return 異常對象
      */
-    fun exception(customerMsg: String?): BusinessException? {
+    fun exception(customerMsg: String?): BusinessException {
         return BusinessException(customerMsg, this.code)
     }
 
-    fun exception(cause: Throwable?): BusinessException? {
+    fun exception(cause: Throwable?): BusinessException {
         return BusinessException(enMessage, this.code, cause)
     }
 

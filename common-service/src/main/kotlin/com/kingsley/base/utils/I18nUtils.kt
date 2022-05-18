@@ -58,15 +58,15 @@ object I18nUtils {
      * @return 經過處理並轉換為小寫的字符串
      */
     @JvmStatic
-    val currentLocaleCodeInQooApp: String
-        get() = getLocaleCodeInQooApp(currentLocaleCode.toString())
+    val currentLocaleCodeInApp: String
+        get() = getLocaleCodeInApp(currentLocaleCode.toString())
 
     /**
      * 這個方法輸出經過標準化處理並轉換為小寫的字符串
      * @return 經過處理並轉換為小寫的字符串
      */
     @JvmStatic
-    fun getLocaleCodeInQooApp(locale: String): String {
+    fun getLocaleCodeInApp(locale: String): String {
         var localeTemp = locale
         val bean = SpringContextUtils.getBean(I18nConfiguration.I18nsLocaleCustomer::class.java)
         if (bean.isPresent) {
@@ -109,8 +109,8 @@ object I18nUtils {
     fun getMessage(locale: Locale, i18nKey: String, values: Map<String, Any?>?, prefix: String?, suffix: String?): String? {
         try {
             //對多語言進行一次標準化處理
-            val localeCodeInQooApp = getLocaleCodeInQooApp(locale.toString())
-            val message: String? = SpringContextUtils.applicationContext?.getMessage(i18nKey, null, getLocaleByCode(localeCodeInQooApp))
+            val localeCodeInApp = getLocaleCodeInApp(locale.toString())
+            val message: String = SpringContextUtils.applicationContext.getMessage(i18nKey, null, getLocaleByCode(localeCodeInApp))
             return if (MapUtils.isNotEmpty(values)) {
                 CommonStringUtils.replaceValue(message, values!!, prefix, suffix)
             } else message

@@ -20,57 +20,55 @@ import java.util.*
 @Profile("devel", "beta", "testing", "prod", "production")
 class ApplicationEventConfig {
     private val log = LoggerFactory.getLogger(ApplicationEventConfig::class.java)
-    
+
     @Bean
-    fun startedListener(): ApplicationListener<ApplicationStartedEvent> {
-        return ApplicationListener<ApplicationStartedEvent> { event: ApplicationStartedEvent? ->
-            val secondName = secondName
-            val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-            log.info("$secondName - 啟動成功! ")
-            val text =
-                "啟動成功" + ",最大允許內存:" + Runtime.getRuntime().maxMemory() / 1048576 + "MB,已使用:" + Runtime.getRuntime()
-                    .totalMemory() / 1048576 + " @ " + format.format(
-                    Date()
-                )
-            val applicationName: String? = SpringContextUtils.getEnvironment("spring.application.name")
-            val message = SlackMessage("")
-            val attach = SlackAttachment()
-            attach.setFallback(text)
-            attach.setColor("good")
-            //
-            attach.setTitle("$applicationName @ $secondName")
-            attach.setText(text)
-            message.addAttachments(attach)
-            log.debug("ApplicationStartedEvent:{}", CommonStringUtils.toString(message))
-            SlackUtils.say(message)
-        }
+    fun startedListener() = ApplicationListener<ApplicationStartedEvent> {
+        val secondName = secondName
+        val format = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        log.info("$secondName - 啟動成功! ")
+        val text =
+            "啟動成功" + ",最大允許內存:" + Runtime.getRuntime().maxMemory() / 1048576 + "MB,已使用:" + Runtime.getRuntime()
+                .totalMemory() / 1048576 + " @ " + format.format(
+                Date()
+            )
+        val applicationName: String? = SpringContextUtils.getEnvironment("spring.application.name")
+        val message = SlackMessage("")
+        val attach = SlackAttachment()
+        attach.setFallback(text)
+        attach.setColor("good")
+        //
+        attach.setTitle("$applicationName @ $secondName")
+        attach.setText(text)
+        message.addAttachments(attach)
+        log.debug("ApplicationStartedEvent:{}", CommonStringUtils.toString(message))
+        SlackUtils.say(message)
     }
 
     @Bean
-    fun failedListener(): ApplicationListener<ApplicationFailedEvent> {
-        return ApplicationListener<ApplicationFailedEvent> { event: ApplicationFailedEvent ->
-            val exception: Throwable? = event.exception
-            var errorMessage: String? = "未知錯誤"
-            if (exception != null) {
-                errorMessage = exception.message
-                log.error(errorMessage, exception)
-            }
-            log.info("啟動失敗:{}", errorMessage)
-            val text: String? = event.exception.message
-            val applicationName: String? = SpringContextUtils.getEnvironment("spring.application.name")
-            val message = SlackMessage("")
-            val attach = SlackAttachment()
-            attach.setFallback(text)
-            attach.setColor("danger")
-            attach.setTitle(applicationName + "@" + SpringContextUtils.firstProfiles)
-            attach.setText(errorMessage)
-            message.addAttachments(attach)
-            log.debug("ApplicationStartedEvent:{}", CommonStringUtils.toString(message))
-            SlackUtils.say(message)
+    fun failedListener() = ApplicationListener<ApplicationFailedEvent> {
+        val exception: Throwable? = it.exception
+        var errorMessage: String? = "未知錯誤"
+        if (exception != null) {
+            errorMessage = exception.message
+            log.error(errorMessage, exception)
         }
+        log.info("啟動失敗:{}", errorMessage)
+        val text: String? = it.exception.message
+        val applicationName: String? = SpringContextUtils.getEnvironment("spring.application.name")
+        val message = SlackMessage("")
+        val attach = SlackAttachment()
+        attach.setFallback(text)
+        attach.setColor("danger")
+        attach.setTitle(applicationName + "@" + SpringContextUtils.firstProfiles)
+        attach.setText(errorMessage)
+        message.addAttachments(attach)
+        log.debug("ApplicationStartedEvent:{}", CommonStringUtils.toString(message))
+        SlackUtils.say(message)
     }
 
     companion object {
+
+        @JvmStatic
         val secondName: String
             get() {
                 var hostname: String? = SpringContextUtils.getEnvironment("POD_NAME")

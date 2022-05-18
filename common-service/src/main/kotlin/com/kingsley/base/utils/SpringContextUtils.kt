@@ -26,7 +26,7 @@ class SpringContextUtils : ApplicationContextAware {
         private val log = LoggerFactory.getLogger(SpringContextUtils::class.java)
         private var isProd: Boolean? = null
 
-        var applicationContext: ApplicationContext? = null
+        lateinit var applicationContext: ApplicationContext
             private set
 
         /**
